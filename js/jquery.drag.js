@@ -22,7 +22,6 @@
 
             this.boundMouseDownListener = this.dragMouseDownListener.bind(this);
             this.boundMouseUpListener = this.dragMouseUpListener.bind(this);
-            this.boundMouseOutListener = this.dragMouseOutListener.bind(this);
 
             this.draw();
 
@@ -40,6 +39,8 @@
             this.oldMouseX = event.pageX;
             this.boundMouseMoveListener = this.dragMouseMoveListener.bind(this);
             this.context.addEventListener('mousemove', this.boundMouseMoveListener);
+            this.boundMouseOutListener = this.dragMouseOutListener.bind(this);
+            this.context.querySelector('.drag__rail').addEventListener('mouseout', this.boundMouseOutListener);
         }
 
         dragMouseMoveListener(event) {
@@ -50,21 +51,30 @@
                 let handleStyle = getComputedStyle(handle);
                 let currentHandlePosition = handleStyle.getPropertyValue('left');
                 let dragHandleWidth = handleStyle.getPropertyValue('width');
+                console.log(currentHandlePosition);
 
                 let rail = dragEl.querySelector('.drag__rail');
                 let railStyle = getComputedStyle(rail);
                 let maxStep = railStyle.getPropertyValue('width');
+                maxStep = parseInt(maxStep) - parseInt(dragHandleWidth);
+                let minStep = 0;
 
                 if (this.isInMove) {
                     this.newMouseX = event.pageX;
 
                     this.shiftByX = this.newMouseX - this.oldMouseX;
 
-                    if (parseInt(currentHandlePosition) > parseInt(maxStep) - parseInt(dragHandleWidth) / 2) {
-                        handle.style.left = (parseInt(maxStep) - parseInt(dragHandleWidth)) + 'px';
+                    if ((parseInt(currentHandlePosition) > maxStep) && (this.shiftByX > 0)) {
+                        this.storedX = maxStep - 1;
+                        this.shiftByX = 0;
+                    } else if ((parseInt(currentHandlePosition) < minStep) && (this.shiftByX < 0)) {
+                        this.storedX = minStep + 1;
+                        this.shiftByX = 0;
                     } else {
-                        handle.style.left = (this.storedX + this.shiftByX) + 'px';
+                        handle.style.left = this.storedX + this.shiftByX + 'px';
                     };
+
+                    
                 };
             };
         }
@@ -81,7 +91,6 @@
         addListeners() {
             this.context.addEventListener('mousedown', this.boundMouseDownListener);
             this.context.addEventListener('mouseup', this.boundMouseUpListener);
-            this.context.addEventListener('mouseout', this.boundMouseOutListener);
         }
 
     }
