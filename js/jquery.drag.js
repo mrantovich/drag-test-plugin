@@ -6,14 +6,15 @@
 
             this.id = id;
             this.context = context;
+
+            // Variable that need to know if mouse is moving after its button pressed down.
             this.isInMove = false;
 
+            // Variables to get and set coordinates of handle.
             this.shiftByX = 0;
             this.storedX = 0;
 
-            this.dragHandleStyle = undefined;
-
-            // Inserting elements with corresponding classes.
+            // Create DOM elements with corresponding classes.
             this.dragRail = document.createElement('div');
             this.dragRail.className = 'drag__rail';
 
@@ -28,6 +29,7 @@
         }
 
         draw() {
+            // Create DOM structure and add all needed event listeners.
             this.context.append(this.dragRail);
             this.dragRail.append(this.dragHandle);
 
@@ -44,19 +46,26 @@
         }
 
         dragMouseMoveListener(event) {
+            //React on mouse movement when mouse button is down.
             if (this.isInMove) {
                 let dragEl = this.context;
 
+                // Compute all needed variables and define minmum and maximum values of range
+                // to limit handle movement by them.
                 let handle = dragEl.querySelector('.drag__handle');
                 let handleStyle = getComputedStyle(handle);
-                let currentHandlePosition = handleStyle.getPropertyValue('left');
-                let dragHandleWidth = handleStyle.getPropertyValue('width');
-                console.log(currentHandlePosition);
 
+                // Get current handle position and width and convert them to integer.
+                let currentHandlePosition = parseInt(handleStyle.getPropertyValue('left'));
+                let dragHandleWidth = parseInt(handleStyle.getPropertyValue('width'));
+
+                // Get possible maximum value of rail and convert it to integer to use more compact formula.
                 let rail = dragEl.querySelector('.drag__rail');
                 let railStyle = getComputedStyle(rail);
                 let maxStep = railStyle.getPropertyValue('width');
-                maxStep = parseInt(maxStep) - parseInt(dragHandleWidth);
+
+                // Store maximum and minimum value;
+                maxStep -= dragHandleWidth;
                 let minStep = 0;
 
                 if (this.isInMove) {
@@ -64,10 +73,12 @@
 
                     this.shiftByX = this.newMouseX - this.oldMouseX;
 
-                    if ((parseInt(currentHandlePosition) > maxStep) && (this.shiftByX > 0)) {
+                    // Reset this.shiftByX when on maximum or minimum.
+                    // Or set handle position (absolutly positioned by left).
+                    if ((currentHandlePosition > maxStep) && (this.shiftByX > 0)) {
                         this.storedX = maxStep - 1;
                         this.shiftByX = 0;
-                    } else if ((parseInt(currentHandlePosition) < minStep) && (this.shiftByX < 0)) {
+                    } else if ((currentHandlePosition < minStep) && (this.shiftByX < 0)) {
                         this.storedX = minStep + 1;
                         this.shiftByX = 0;
                     } else {
