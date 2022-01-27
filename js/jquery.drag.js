@@ -2,10 +2,11 @@
 
     class Drag {
 
-        constructor(context, id) {
+        constructor(context, id, options) {
 
             this.id = id;
             this.context = context;
+            this.options = options;
 
             // Variable that need to know if mouse is moving after its button pressed down.
             this.isInMove = false;
@@ -32,6 +33,9 @@
             // Create DOM structure and add all needed event listeners.
             this.context.append(this.dragRail);
             this.dragRail.append(this.dragHandle);
+
+            // Make handle coloured.
+            this.context.querySelector('.drag__handle').style.background = this.options.bgcolor;
 
             this.addListeners();
         }
@@ -119,7 +123,7 @@
         return this.each(function() {
 
             idCounter++;
-            new Drag(this, idCounter);
+            new Drag(this, idCounter, settings);
 
         });
 
