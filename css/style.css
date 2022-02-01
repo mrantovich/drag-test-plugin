@@ -99,9 +99,8 @@ html, body {
   border-radius: 25px;
 }
 
-.drag__handle {
+.drag__handle_left, .drag__handle_right {
   position: absolute;
-  left: 0px;
   top: 50%;
   transform: translateY(-50%);
   width: 30px;

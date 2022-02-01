@@ -35,9 +35,8 @@ html, body {
         border-radius: 25px;
     }
 
-    &__handle {
+    &__handle_left,&__handle_right {
         position: absolute;
-        left: 0px;
         top: 50%;
         transform: translateY(-50%);
 
@@ -47,4 +46,5 @@ html, body {
         background: #4f004f;
         cursor: pointer;
     }
+
 }
